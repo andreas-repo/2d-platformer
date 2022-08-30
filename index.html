@@ -29,7 +29,11 @@
             create: create,
             update: update
         }
-    }                                                                                       ;
+    }
+
+    var player;
+    var platforms;
+    var cursors;;
 
     let game = new Phaser.Game(config);
 
@@ -64,7 +68,7 @@
         //physics sprite positioned at 100x450 pixels from the bottom of the game;
         //because this sprite is created through the physics.add() game object factory
         //this  object has a dynamic physics body by default
-        var player = this.physics.add.sprite(100, 450, 'avatar');
+        player = this.physics.add.sprite(100, 450, 'avatar');
         //this slight bounce value allows the avator object do "bounce" at the moment of landing
         player.setBounce(0.2);
         //this makes it impossible for the avatar to leave the game dimensions and stops the player
@@ -105,6 +109,9 @@
             repeat: -1
         });
 
+        //adds movement controls
+        cursors = this.input.keyboard.createCursorKeys();
+
         //this is necessary to check for collisions between the player and the platforms,
         //else the player avatar would fall through the platforms
         this.physics.add.collider(player, platforms);
@@ -112,6 +119,30 @@
 
     function update ()
     {
+        //if the left key is depressed...
+        if (cursors.left.isDown) {
+            //...then the avatar moves to the left of the screen...
+            player.setVelocityX(-160);
+            //...and starts to play the correct movement animation
+            player.anims.play('left', true);
+        //...else if the right key is depressed...
+        } else if (cursors.right.isDown) {
+            //...then the player avatar moves to the right of the screen and...
+            player.setVelocityX(160);
+            //...the correct animation plays
+            player.anims.play('right', true);
+        //...else the players....
+        } else {
+            //...velocity is reduced to 0...
+            player.setVelocityX(0);
+            //...and the turning animation is played
+            player.anims.play('turn');
+        }
+        //checks if the players avatar stands on the ground and if the 'UP' key is depressed...
+        if (cursors.up.isDown && player.body.touching.down) {
+            //...to jump
+            player.setVelocityY(-330);
+        }
     }
 
 </script>
